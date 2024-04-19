@@ -1,19 +1,20 @@
+/* eslint-disable prettier/prettier */
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       fontFamily: {
-        roboto: ['Roboto', 'sans-serif'],
-        baloo: ['Baloo', 'sans-serif'],
+        'roboto': ['Roboto', 'sans-serif'],
+        'baloo': ['Baloo', 'sans-serif'],
       },
       colors: {
+        'yellow': '#DBAC2C',
         'yellow-light': '#F1E9C9',
-        yellow: '#DBAC2C',
         'yellow-dark': '#C47F17',
 
+        'purple': '#8047F8',
         'purple-light': '#EBE5F9',
-        purple: '#8047F8',
         'purple-dark': '#4B2995',
 
         'base-title': '#272221',
@@ -25,8 +26,8 @@ export default {
         'base-input': '#EDEDED',
         'base-card': '#F3F2F2',
 
-        background: '#FAFAFA',
-        white: '#FFFFFF',
+        'background': '#FAFAFA',
+        'white': '#FFFFFF',
       },
     },
   },
