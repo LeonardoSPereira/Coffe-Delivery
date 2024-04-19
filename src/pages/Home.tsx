@@ -67,11 +67,23 @@ export function Home() {
         </section>
 
         <section>
-          <h2>Nossos cafés</h2>
+          <h2 className="text-base-subtitle font-baloo text-4xl font-extrabold mb-14">
+            Nossos cafés
+          </h2>
 
-          {productsInfo.map((product) => (
-            <Product key={product.id} imgPath={product.imgPath} />
-          ))}
+          <div className="flex items-center flex-wrap gap-8">
+            {productsInfo.map((product) => (
+              <Product
+                key={product.id}
+                id={product.id}
+                imgPath={product.imgPath}
+                title={product.title}
+                description={product.description}
+                price={product.price}
+                tags={product.tags}
+              />
+            ))}
+          </div>
         </section>
       </main>
     </div>
