@@ -14,7 +14,7 @@ interface ProductCardProps {
   data: ProductInfoCardProps
 }
 export function Product({ data }: ProductCardProps) {
-  const { addToCart } = useCart()
+  const { addProductsToCart } = useCart()
   const [quantity, setQuantity] = useState(1)
 
   function handleIncreaseProductQuantity() {
@@ -26,7 +26,7 @@ export function Product({ data }: ProductCardProps) {
   }
 
   function handleAddProductToCart() {
-    addToCart({
+    addProductsToCart({
       id: data.id,
       imgPath: data.imgPath,
       title: data.title,

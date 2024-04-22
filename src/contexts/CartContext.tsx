@@ -9,21 +9,52 @@ interface ProductProps {
   quantity: number
 }
 
+interface AddressProps {
+  zip: string
+  street: string
+  number?: string
+  complement?: string
+  city: string
+  state: string
+  uf: string
+}
+
+interface CartProps {
+  products: ProductProps[]
+  address: AddressProps
+  paymentMethod: 'credit' | 'debit' | 'cash' | ''
+}
+
 interface CartContextProps {
-  cart: ProductProps[]
-  addToCart: (product: ProductProps) => void
-  removeFromCart: (productId: number) => void
+  cart: CartProps
+  addProductsToCart: (product: ProductProps) => void
+  removeProductsFromCart: (productId: number) => void
+  addAddressToCart: (address: AddressProps) => void
+  setPaymentMethod: (paymentMethod: 'credit' | 'debit' | 'cash') => void
+  clearCart: () => void
 }
 
 const CartContext = createContext({} as CartContextProps)
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<ProductProps[]>([])
+  const [cart, setCart] = useState<CartProps>({
+    products: [],
+    address: {
+      zip: '',
+      street: '',
+      city: '',
+      state: '',
+      uf: '',
+    },
+    paymentMethod: '',
+  })
 
   // function to add product to cart
-  function addToCart(productToCart: ProductProps) {
+  function addProductsToCart(productToCart: ProductProps) {
     // check if product is already in cart
-    const productInCart = cart.find((item) => item.id === productToCart.id)
+    const productInCart = cart.products.find(
+      (item) => item.id === productToCart.id,
+    )
 
     // if product is already in cart, throw error
     if (productInCart) {
@@ -32,23 +63,70 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
 
     // if product is not in cart, add it to cart
-    setCart((prevState) => [...prevState, productToCart])
+    setCart((prevState) => ({
+      ...prevState,
+      products: [...prevState.products, productToCart],
+    }))
 
     // return success message
     toast.success('Produto adicionado ao carrinho.')
   }
 
   // function to remove product from cart
-  function removeFromCart(productId: number) {
+  function removeProductsFromCart(productId: number) {
     // filter cart to remove product
-    const newCart = cart.filter((item) => item.id !== productId)
+    const filteredProducts = cart.products.filter(
+      (item) => item.id !== productId,
+    )
 
     // set new cart
-    setCart(newCart)
+    setCart((prevState) => ({
+      ...prevState,
+      products: filteredProducts,
+    }))
+
+    toast.success('Produto removido do carrinho.')
+  }
+
+  function addAddressToCart(address: AddressProps) {
+    setCart((prevState) => ({
+      ...prevState,
+      address,
+    }))
+  }
+
+  function setPaymentMethod(paymentMethod: 'credit' | 'debit' | 'cash') {
+    setCart((prevState) => ({
+      ...prevState,
+      paymentMethod,
+    }))
+  }
+
+  function clearCart() {
+    setCart({
+      products: [],
+      address: {
+        zip: '',
+        street: '',
+        city: '',
+        state: '',
+        uf: '',
+      },
+      paymentMethod: '',
+    })
   }
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        addProductsToCart,
+        removeProductsFromCart,
+        addAddressToCart,
+        setPaymentMethod,
+        clearCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   )

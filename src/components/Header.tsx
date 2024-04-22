@@ -20,13 +20,12 @@ export function Header() {
 
         <NavLink
           to="/checkout"
-          onClick={() => console.log('Cart clicked')}
           className="p-2 rounded-md z-10 relative bg-yellow-light text-yellow-dark cursor-pointer hover:bg-yellow hover:text-yellow-light"
         >
           <ShoppingCart size={24} weight="fill" />
-          {cart.length > 0 && (
+          {cart.products.length > 0 && (
             <span className="absolute z-10 -top-2 -right-1 size-5 rounded-full bg-yellow-dark flex items-center justify-center text-white font-bold">
-              {cart.length}
+              {cart.products.length}
             </span>
           )}
         </NavLink>
