@@ -1,10 +1,11 @@
 import { MapPin, ShoppingCart } from 'phosphor-react'
 import { LogoSvg } from '../assets/Logo'
 import { NavLink } from 'react-router-dom'
-import { useState } from 'react'
+import { useCart } from '../contexts/CartContext'
 
 export function Header() {
-  const [cart, setCart] = useState([1, 2])
+  const { cart } = useCart()
+
   return (
     <header className="flex items-center justify-between px-40 py-8">
       <LogoSvg />

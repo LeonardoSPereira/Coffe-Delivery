@@ -73,15 +73,7 @@ export function Home() {
 
           <div className="flex items-center flex-wrap gap-8">
             {productsInfo.map((product) => (
-              <Product
-                key={product.id}
-                id={product.id}
-                imgPath={product.imgPath}
-                title={product.title}
-                description={product.description}
-                price={product.price}
-                tags={product.tags}
-              />
+              <Product key={product.id} data={product} />
             ))}
           </div>
         </section>
