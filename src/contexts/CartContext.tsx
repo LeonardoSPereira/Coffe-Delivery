@@ -12,10 +12,10 @@ interface ProductProps {
 interface AddressProps {
   zip: string
   street: string
-  number?: string
+  number: number
   complement?: string
+  neighborhood: string
   city: string
-  state: string
   uf: string
 }
 
@@ -31,6 +31,8 @@ interface CartContextProps {
   removeProductsFromCart: (productId: number) => void
   addAddressToCart: (address: AddressProps) => void
   changePaymentMethod: (paymentMethod: 'credit' | 'debit' | 'cash') => void
+  increaseProductQuantity: (productId: number) => void
+  decreaseProductQuantity: (productId: number) => void
   clearCart: () => void
 }
 
@@ -42,14 +44,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     address: {
       zip: '',
       street: '',
+      number: 0,
+      neighborhood: '',
       city: '',
-      state: '',
       uf: '',
     },
     paymentMethod: '',
   })
 
-  // function to add product to cart
   function addProductsToCart(productToCart: ProductProps) {
     // check if product is already in cart
     const productInCart = cart.products.find(
@@ -72,7 +74,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     toast.success('Produto adicionado ao carrinho.')
   }
 
-  // function to remove product from cart
   function removeProductsFromCart(productId: number) {
     // filter cart to remove product
     const filteredProducts = cart.products.filter(
@@ -102,14 +103,52 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }))
   }
 
+  function increaseProductQuantity(productId: number) {
+    const updatedProducts = cart.products.map((product) => {
+      if (product.id === productId) {
+        return {
+          ...product,
+          quantity: product.quantity + 1,
+        }
+      }
+
+      return product
+    })
+
+    setCart((prevState) => ({
+      ...prevState,
+      products: updatedProducts,
+    }))
+  }
+
+  function decreaseProductQuantity(productId: number) {
+    const updatedProducts = cart.products.map((product) => {
+      if (product.id === productId) {
+        return {
+          ...product,
+          quantity: product.quantity - 1,
+        }
+      }
+
+      return product
+    })
+
+    setCart((prevState) => ({
+      ...prevState,
+      products: updatedProducts,
+    }))
+  }
+
   function clearCart() {
     setCart({
       products: [],
       address: {
         zip: '',
         street: '',
+        number: 0,
+        complement: undefined,
+        neighborhood: '',
         city: '',
-        state: '',
         uf: '',
       },
       paymentMethod: '',
@@ -124,6 +163,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         removeProductsFromCart,
         addAddressToCart,
         changePaymentMethod,
+        increaseProductQuantity,
+        decreaseProductQuantity,
         clearCart,
       }}
     >

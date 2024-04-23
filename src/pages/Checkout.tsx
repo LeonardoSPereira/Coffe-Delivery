@@ -10,9 +10,11 @@ import { Header } from '../components/Header'
 import { useCart } from '../contexts/CartContext'
 import { ProductItem } from '../components/ProductItem'
 import { Separator } from '../components/Separator'
+import { toast } from 'sonner'
+import { useNavigate } from 'react-router-dom'
 
 export function Checkout() {
-  const { cart, changePaymentMethod } = useCart()
+  const { cart, changePaymentMethod, addAddressToCart } = useCart()
 
   const [cep, setCep] = useState('')
   const [street, setStreet] = useState('')
@@ -30,6 +32,8 @@ export function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState<
     'credit' | 'debit' | 'cash' | ''
   >('')
+
+  const navigate = useNavigate()
 
   function handleCepChange(event: ChangeEvent<HTMLInputElement>) {
     const inputValue = event.target.value
@@ -76,6 +80,40 @@ export function Checkout() {
   ) {
     changePaymentMethod(newPaymentMethod)
     setPaymentMethod(newPaymentMethod)
+  }
+
+  function handleCompleteOrder() {
+    if (cart.products.length === 0) {
+      toast.error('Adicione produtos ao carrinho antes de finalizar o pedido')
+      return
+    }
+
+    if (!cep || !street || !neighborhood || !city || !state) {
+      toast.error('Preencha todos os campos obrigatórios')
+      return
+    }
+
+    if (!number && !complement) {
+      toast.error('Preencha o número ou o complemento')
+      return
+    }
+
+    if (!paymentMethod) {
+      toast.error('Selecione uma forma de pagamento')
+      return
+    }
+
+    addAddressToCart({
+      zip: cep,
+      street,
+      number,
+      complement,
+      neighborhood,
+      city,
+      uf: state,
+    })
+
+    navigate('/confirmation')
   }
 
   useEffect(() => {
@@ -281,6 +319,7 @@ export function Checkout() {
               return (
                 <div key={item.id}>
                   <ProductItem
+                    productId={item.id}
                     imgPath={item.imgPath}
                     title={item.title}
                     price={item.price}
@@ -324,7 +363,10 @@ export function Checkout() {
               </div>
             </div>
 
-            <button className="px-3 py-2 rounded-md bg-yellow text-white uppercase font-bold text-sm leading-6">
+            <button
+              onClick={handleCompleteOrder}
+              className="px-3 py-2 rounded-md bg-yellow text-white uppercase font-bold text-sm leading-6"
+            >
               Confirmar pedido
             </button>
           </div>

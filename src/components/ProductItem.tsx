@@ -1,6 +1,8 @@
 import { Minus, Plus, Trash } from 'phosphor-react'
+import { useCart } from '../contexts/CartContext'
 
 interface ProductItemProps {
+  productId: number
   imgPath: string
   title: string
   price: number
@@ -8,11 +10,22 @@ interface ProductItemProps {
 }
 
 export function ProductItem({
+  productId,
   imgPath,
   title,
   price,
   quantity,
 }: ProductItemProps) {
+  const { increaseProductQuantity, decreaseProductQuantity } = useCart()
+
+  function handleIncreaseProductQuantity(id: number) {
+    increaseProductQuantity(id)
+  }
+
+  function handleDecreaseProductQuantity(id: number) {
+    decreaseProductQuantity(id)
+  }
+
   return (
     <div className="flex items-start justify-between px-1">
       <div className="flex items-start gap-5">
@@ -25,6 +38,7 @@ export function ProductItem({
             <div className="flex items-center justify-end gap-2">
               <div className="flex items-center gap-1 p-2 rounded-md bg-base-button">
                 <button
+                  onClick={() => handleDecreaseProductQuantity(productId)}
                   className="text-purple hover:text-purple-dark cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={quantity <= 1}
                 >
@@ -33,7 +47,10 @@ export function ProductItem({
 
                 <p className="text-base-title">{quantity}</p>
 
-                <button className="text-purple hover:text-purple-dark cursor-pointer">
+                <button
+                  onClick={() => handleIncreaseProductQuantity(productId)}
+                  className="text-purple hover:text-purple-dark cursor-pointer"
+                >
                   <Plus weight="bold" size={20} />
                 </button>
               </div>
@@ -50,7 +67,7 @@ export function ProductItem({
       </div>
 
       <p className="ml-12 text-base-text font-bold">
-        {price.toLocaleString('pt-BR', {
+        {(price * quantity).toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL',
         })}
