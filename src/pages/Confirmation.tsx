@@ -24,6 +24,7 @@ export function Confirmation() {
         <h1 className="font-baloo text-yellow-dark text-4xl font-extrabold">
           Uhu! Pedido confirmado
         </h1>
+
         <p className="text-base-subtitle text-xl mb-10">
           Agora é só aguardar que logo o café chegará até você
         </p>
@@ -48,6 +49,7 @@ export function Confirmation() {
                 <div className="bg-yellow p-2 rounded-full text-white">
                   <Timer weight="fill" size={24} />
                 </div>
+
                 <p>
                   Previsão de entrega <br /> <strong>20min - 30min</strong>
                 </p>
@@ -57,6 +59,7 @@ export function Confirmation() {
                 <div className="bg-yellow-dark p-2 rounded-full text-white">
                   <CurrencyDollar size={24} />
                 </div>
+
                 <p>
                   Pagamento na entrega <br /> <strong>{paymentMethod}</strong>
                 </p>

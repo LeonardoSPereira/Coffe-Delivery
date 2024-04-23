@@ -16,7 +16,15 @@ export function ProductItem({
   price,
   quantity,
 }: ProductItemProps) {
-  const { increaseProductQuantity, decreaseProductQuantity } = useCart()
+  const {
+    removeProductsFromCart,
+    increaseProductQuantity,
+    decreaseProductQuantity,
+  } = useCart()
+
+  function handleRemoveProductFromCart(id: number) {
+    removeProductsFromCart(id)
+  }
 
   function handleIncreaseProductQuantity(id: number) {
     increaseProductQuantity(id)
@@ -56,7 +64,10 @@ export function ProductItem({
               </div>
             </div>
 
-            <button className="flex items-center gap-1 px-2 py-2.5  rounded-md bg-base-button">
+            <button
+              onClick={() => handleRemoveProductFromCart(productId)}
+              className="flex items-center gap-1 px-2 py-2.5  rounded-md bg-base-button"
+            >
               <Trash size={16} className="text-purple" />
               <span className="text-base-subtitle text-xs leading-5 uppercase">
                 Remover

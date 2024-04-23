@@ -13,16 +13,28 @@ import { Separator } from '../components/Separator'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 
+interface AddressProps {
+  zip: string
+  street: string
+  number: number
+  complement?: string
+  neighborhood: string
+  city: string
+  uf: string
+}
+
 export function Checkout() {
   const { cart, changePaymentMethod, addAddressToCart } = useCart()
 
-  const [cep, setCep] = useState('')
-  const [street, setStreet] = useState('')
-  const [number, setNumber] = useState(0)
-  const [complement, setComplement] = useState('')
-  const [neighborhood, setNeighborhood] = useState('')
-  const [city, setCity] = useState('')
-  const [state, setState] = useState('')
+  const [address, setAddress] = useState<AddressProps>({
+    zip: '',
+    street: '',
+    number: 0,
+    complement: '',
+    neighborhood: '',
+    city: '',
+    uf: '',
+  })
 
   const [totalPriceFromProductsInCart, setTotalPriceFromProductsInCart] =
     useState(0)
@@ -35,44 +47,38 @@ export function Checkout() {
 
   const navigate = useNavigate()
 
-  function handleCepChange(event: ChangeEvent<HTMLInputElement>) {
-    const inputValue = event.target.value
+  function handleAddressChange(e: ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target
 
-    const digitsOnly = inputValue.replace(/\D/g, '')
+    if (name === 'zip') {
+      const digitsOnly = value.replace(/\D/g, '')
 
-    const formattedCepValue = digitsOnly.replace(/^(\d{5})(\d{3})$/, '$1-$2')
+      const formattedCepValue = digitsOnly.replace(/^(\d{5})(\d{3})$/, '$1-$2')
 
-    setCep(formattedCepValue)
-  }
+      setAddress((prevState) => ({
+        ...prevState,
+        zip: formattedCepValue,
+      }))
+      return
+    }
 
-  function handleStreetChange(event: ChangeEvent<HTMLInputElement>) {
-    setStreet(event.target.value)
-  }
+    if (name === 'uf') {
+      const inputValueWithoutNumbers = value.replace(/^[0-9]$/, '')
+      const inputValueFormatted = inputValueWithoutNumbers
+        .slice(0, 2)
+        .toUpperCase()
 
-  function handleNumberChange(event: ChangeEvent<HTMLInputElement>) {
-    setNumber(Number(event.target.value))
-  }
+      setAddress((prevState) => ({
+        ...prevState,
+        uf: inputValueFormatted,
+      }))
+      return
+    }
 
-  function handleComplementChange(event: ChangeEvent<HTMLInputElement>) {
-    setComplement(event.target.value)
-  }
-
-  function handleNeighborhoodChange(event: ChangeEvent<HTMLInputElement>) {
-    setNeighborhood(event.target.value)
-  }
-
-  function handleCityChange(event: ChangeEvent<HTMLInputElement>) {
-    setCity(event.target.value)
-  }
-
-  function handleStateChange(event: ChangeEvent<HTMLInputElement>) {
-    const inputValue = event.target.value
-    const inputValueWithoutNumbers = inputValue.replace(/^[0-9]$/, '')
-    const inputValueFormatted = inputValueWithoutNumbers
-      .slice(0, 2)
-      .toUpperCase()
-
-    setState(inputValueFormatted)
+    setAddress((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }))
   }
 
   function handlePaymentMethodChange(
@@ -88,12 +94,18 @@ export function Checkout() {
       return
     }
 
-    if (!cep || !street || !neighborhood || !city || !state) {
+    if (
+      !address.zip ||
+      !address.street ||
+      !address.neighborhood ||
+      !address.city ||
+      !address.uf
+    ) {
       toast.error('Preencha todos os campos obrigatórios')
       return
     }
 
-    if (!number && !complement) {
+    if (!address.number && !address.complement) {
       toast.error('Preencha o número ou o complemento')
       return
     }
@@ -104,13 +116,13 @@ export function Checkout() {
     }
 
     addAddressToCart({
-      zip: cep,
-      street,
-      number,
-      complement,
-      neighborhood,
-      city,
-      uf: state,
+      zip: address.zip,
+      street: address.street,
+      number: address.number,
+      complement: address.complement,
+      neighborhood: address.neighborhood,
+      city: address.city,
+      uf: address.uf,
     })
 
     navigate('/confirmation')
@@ -160,8 +172,10 @@ export function Checkout() {
           <form className="w-full flex flex-col items-start justify-center gap-4 p-10 rounded-md bg-base-card">
             <div className="flex items-start gap-2 mb-4">
               <MapPinLine size={24} className="text-yellow-dark" />
+
               <div className="flex flex-col">
                 <h3 className="text-base-subtitle">Endereço de entrega</h3>
+
                 <p className="text-base-text text-sm">
                   Informe o endereço onde deseja receber seu pedido
                 </p>
@@ -171,17 +185,20 @@ export function Checkout() {
             <input
               className="p-3 rounded-md bg-base-input text-sm text-base-text placeholder-base-label focus:outline-yellow-dark"
               type="text"
+              name="zip"
               placeholder="CEP"
               maxLength={9}
-              value={cep}
-              onChange={handleCepChange}
+              value={address.zip}
+              onChange={handleAddressChange}
             />
+
             <input
               className="w-full p-3 rounded-md bg-base-input text-sm text-base-text placeholder-base-label focus:outline-yellow-dark"
               type="text"
+              name="street"
               placeholder="Rua"
-              value={street}
-              onChange={handleStreetChange}
+              value={address.street}
+              onChange={handleAddressChange}
             />
 
             <div className="w-full flex items-center gap-3">
@@ -189,17 +206,20 @@ export function Checkout() {
                 className="p-3 rounded-md bg-base-input text-sm text-base-text placeholder-base-label focus:outline-yellow-dark"
                 type="number"
                 min={0}
+                name="number"
                 placeholder="Número"
-                value={number}
-                onChange={handleNumberChange}
+                value={address.number}
+                onChange={handleAddressChange}
               />
+
               <div className="flex w-full items-center justify-between p-3 rounded-md bg-base-input text-sm text-base-text placeholder-base-label focus:outline-yellow-dark">
                 <input
                   className="w-full h-full bg-base-input text-sm text-base-text placeholder-base-label focus:outline-yellow-dark"
                   type="text"
+                  name="complement"
                   placeholder="Complemento"
-                  value={complement}
-                  onChange={handleComplementChange}
+                  value={address.complement}
+                  onChange={handleAddressChange}
                 />
                 <span className="text-base-label text-xs italic">Opcional</span>
               </div>
@@ -209,25 +229,30 @@ export function Checkout() {
               <input
                 className="w-48 p-3 rounded-md bg-base-input text-sm text-base-text placeholder-base-label focus:outline-yellow-dark"
                 type="text"
+                name="neighborhood"
                 placeholder="Bairro"
-                value={neighborhood}
-                onChange={handleNeighborhoodChange}
+                value={address.neighborhood}
+                onChange={handleAddressChange}
               />
+
               <input
                 className="w-full p-3 rounded-md bg-base-input text-sm text-base-text placeholder-base-label focus:outline-yellow-dark"
                 type="text"
+                name="city"
                 placeholder="Cidade"
-                value={city}
-                onChange={handleCityChange}
+                value={address.city}
+                onChange={handleAddressChange}
               />
+
               <input
                 className="w-14 p-3 rounded-md bg-base-input text-sm text-base-text placeholder-base-label focus:outline-yellow-dark"
                 type="text"
                 min={2}
                 max={2}
+                name="uf"
                 placeholder="UF"
-                value={state}
-                onChange={handleStateChange}
+                value={address.uf}
+                onChange={handleAddressChange}
               />
             </div>
           </form>
@@ -238,6 +263,7 @@ export function Checkout() {
 
               <div className="flex flex-col items-start">
                 <h3 className="text-base-subtitle">Pagamento</h3>
+
                 <p className="text-base-text text-sm">
                   O pagamento é feito na entrega. Escolha a forma que deseja
                   pagar
@@ -255,6 +281,7 @@ export function Checkout() {
                 }
               >
                 <CreditCard size={20} className="text-purple" />
+
                 <span
                   className={
                     paymentMethod === 'credit'
@@ -334,6 +361,7 @@ export function Checkout() {
             <div className="flex flex-col gap-3">
               <div className="w-full flex items-center justify-between">
                 <p className="text-base-text text-sm">Total dos itens</p>
+
                 <span className="text-base-text">
                   {totalPriceFromProductsInCart.toLocaleString('pt-BR', {
                     style: 'currency',
@@ -344,6 +372,7 @@ export function Checkout() {
 
               <div className="w-full flex items-center justify-between">
                 <p className="text-base-text text-sm">Entrega</p>
+
                 <span className="text-base-text">
                   {totalPriceFromDelivery.toLocaleString('pt-BR', {
                     style: 'currency',
@@ -354,6 +383,7 @@ export function Checkout() {
 
               <div className="w-full flex items-center justify-between font-bold text-base-subtitle text-xl">
                 <p>Total</p>
+
                 <span>
                   {totalPriceFromOrder.toLocaleString('pt-BR', {
                     style: 'currency',
