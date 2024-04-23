@@ -2,7 +2,7 @@ import { Coffee, Package, ShoppingCart, Timer } from 'phosphor-react'
 import { Background } from '../assets/Background'
 import { BannerImg } from '../assets/BannerImg'
 import { Header } from '../components/Header'
-import { Product } from '../components/Product'
+import { ProductCard } from '../components/ProductCard'
 import { productsInfo } from '../data/productsInfo'
 
 export function Home() {
@@ -73,7 +73,7 @@ export function Home() {
 
           <div className="flex items-center flex-wrap gap-8">
             {productsInfo.map((product) => (
-              <Product key={product.id} data={product} />
+              <ProductCard key={product.id} data={product} />
             ))}
           </div>
         </section>

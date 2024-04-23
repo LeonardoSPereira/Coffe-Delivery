@@ -30,7 +30,7 @@ interface CartContextProps {
   addProductsToCart: (product: ProductProps) => void
   removeProductsFromCart: (productId: number) => void
   addAddressToCart: (address: AddressProps) => void
-  setPaymentMethod: (paymentMethod: 'credit' | 'debit' | 'cash') => void
+  changePaymentMethod: (paymentMethod: 'credit' | 'debit' | 'cash') => void
   clearCart: () => void
 }
 
@@ -95,7 +95,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }))
   }
 
-  function setPaymentMethod(paymentMethod: 'credit' | 'debit' | 'cash') {
+  function changePaymentMethod(paymentMethod: 'credit' | 'debit' | 'cash') {
     setCart((prevState) => ({
       ...prevState,
       paymentMethod,
@@ -123,7 +123,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         addProductsToCart,
         removeProductsFromCart,
         addAddressToCart,
-        setPaymentMethod,
+        changePaymentMethod,
         clearCart,
       }}
     >

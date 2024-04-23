@@ -13,7 +13,7 @@ interface ProductInfoCardProps {
 interface ProductCardProps {
   data: ProductInfoCardProps
 }
-export function Product({ data }: ProductCardProps) {
+export function ProductCard({ data }: ProductCardProps) {
   const { addProductsToCart } = useCart()
   const [quantity, setQuantity] = useState(1)
 
